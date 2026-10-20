@@ -8,7 +8,7 @@ AUTOMAKE ?= automake
 AUTOCONF ?= autoconf
 
 .PHONY += all
-all: $(LIBSODIUM_DIR)/Makefile
+all: $(LIBSODIUM_DIR)/src/libsodium/.libs/libsodium.so
 
 $(LIBSODIUM_DIR):
 	git submodule update --force --checkout $(LIBSODIUM_DIR)
@@ -25,7 +25,10 @@ $(LIBSODIUM_DIR)/configure: $(LIBSODIUM_DIR) $(LIBSODIUM_DIR)/autogen.sh
 
 $(LIBSODIUM_DIR)/Makefile: $(LIBSODIUM_DIR)/configure
 	cd $(LIBSODIUM_DIR) \
-		&& ./configure \
+		&& ./configure
+
+$(LIBSODIUM_DIR)/src/libsodium/.libs/libsodium.so: $(LIBSODIUM_DIR)/Makefile
+	cd $(LIBSODIUM_DIR) \
 		&& make \
 		&& make check
 
