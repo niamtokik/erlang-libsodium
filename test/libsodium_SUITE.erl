@@ -122,11 +122,11 @@ init_group(aead_chacha20poly1305, Config) ->
 init_group(pwhash_argon2i, Config) ->
 	tv_file_hex("pwhash_argon2i.config", Config) ++ Config;
 init_group(pwhash_argon2id, Config) ->
-	tv_file_hex("pwhash_argon2id.config", Config) ++ Config;
+	tv_file_hex8("pwhash_argon2id.config", Config) ++ Config;
 init_group(pwhash_scrypt, Config) ->
-	tv_file_hex("pwhash_scrypt.config", Config) ++ Config;
+	tv_file_hex7("pwhash_scrypt.config", Config) ++ Config;
 init_group(sign, Config) ->
-	tv_file_hex("sign.config", Config) ++ Config;
+	tv_file_hex4("sign.config", Config) ++ Config;
 init_group(_, Config) ->
 	Config.
 
@@ -308,8 +308,8 @@ pwhash_argon2i_password_storage([], _Config) ->
 	Opslimit = 3,
 	Memlimit = 5000000,
 	T1 = ?tv_not(T0, libsodium_crypto_pwhash_argon2i, str, [Passwd, Opslimit, Memlimit], -1),
-	T3 = ?tv_not(T2, libsodium_crypto_pwhash_argon2i, str, [Passwd, Opslimit, Memlimit], T1),
-	_T5 = ?tv_not(T4, libsodium_crypto_pwhash_argon2i, str, [Passwd, Opslimit, Memlimit], T3),
+T3 = ?tv_not(T2, libsodium_crypto_pwhash_argon2i, str, [Passwd, Opslimit, Memlimit], T1),
+_T5 = ?tv_not(T4, libsodium_crypto_pwhash_argon2i, str, [Passwd, Opslimit, Memlimit], T3),
 	?tv_ok(T6, libsodium_crypto_pwhash_argon2i, str_verify, [T1, Passwd], 0),
 	?tv_ok(T7, libsodium_crypto_pwhash_argon2i, str_verify, [T3, Passwd], 0),
 	ok.
@@ -430,3 +430,47 @@ tv_file_hex(Name, Config) ->
 			end || Val <- tuple_to_list(Tuple)])
 		end || Tuple <- List, is_tuple(Tuple)]}
 	end || {Key, List} <- tv_file(Name, Config), is_list(List)].
+
+tv_file_hex4(Name, Config) ->
+	[{tv, Terms}] = tv_file(Name, Config),
+	[{tv, lists:map(fun({A,B,C,D}) ->
+		{
+			binary:decode_hex(list_to_binary(A)),
+			binary:decode_hex(list_to_binary(B)),
+			binary:decode_hex(list_to_binary(C)),
+			binary:decode_hex(list_to_binary(D))
+		}
+	end, Terms)}].
+
+tv_file_hex7(Name, Config) ->
+	Proplist = tv_file(Name, Config),
+	Map = fun({A,B,C,D,E,F,G}) ->
+		{
+			binary:decode_hex(list_to_binary(A)),
+			binary:decode_hex(list_to_binary(B)),
+			binary:decode_hex(list_to_binary(C)),
+			binary:decode_hex(list_to_binary(D)),
+			binary:decode_hex(list_to_binary(E)),
+			binary:decode_hex(list_to_binary(F)),
+			binary:decode_hex(list_to_binary(G))
+		}
+	end,
+	[
+		{Key, lists:map(Map, Terms)}
+		|| {Key, Terms} <- Proplist
+	].
+
+tv_file_hex8(Name, Config) ->
+	[{tv, Terms}] = tv_file(Name, Config),
+	[{tv, lists:map(fun({A,B,C,D,E,F,G,H}) ->
+		{
+			binary:decode_hex(list_to_binary(A)),
+			binary:decode_hex(list_to_binary(B)),
+			binary:decode_hex(list_to_binary(C)),
+			binary:decode_hex(list_to_binary(D)),
+			binary:decode_hex(list_to_binary(E)),
+			binary:decode_hex(list_to_binary(F)),
+			binary:decode_hex(list_to_binary(G)),
+			binary:decode_hex(list_to_binary(H))
+		}
+	end, Terms)}].
