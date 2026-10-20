@@ -1,0 +1,4 @@
+[submodule "c_deps/libsodium"]
+	path = c_deps/libsodium
+	url = https://github.com/jedisct1/libsodium
+	branch = 1.0.18
