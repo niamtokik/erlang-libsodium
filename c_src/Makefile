@@ -74,6 +74,10 @@ else ifeq ($(PLATFORM),freebsd)
 	CC ?= cc
 	CFLAGS ?= -O3 -std=c17 -finline-functions -fstack-protector -Wall -Wmissing-prototypes -fPIC
 	CXXFLAGS ?= -O3 -std=c++14 -finline-functions -fstack-protector -Wall -fPIC
+else ifeq ($(PLATFORM),openbsd)
+	CC ?= cc
+	CFLAGS ?= -O3 -std=c17 -finline-functions -fstack-protector -Wall -Wmissing-prototypes -fPIC
+	CXXFLAGS ?= -O3 -std=c++14 -finline-functions -fstack-protector -Wall -fPIC
 else ifeq ($(PLATFORM),linux)
 	CC ?= gcc
 	CFLAGS ?= -O3 -std=c17 -finline-functions -fstack-protector -Wall -Wmissing-prototypes -fPIC
@@ -106,7 +110,7 @@ LDLIBS += -L"$(ERL_INTERFACE_LIB_DIR)" \
 
 # Dependencies.
 
-LIBSODIUM_VSN ?= 1.0.18
+LIBSODIUM_VSN ?= 1.0.22
 LIBSODIUM_GIT ?= https://github.com/jedisct1/libsodium.git
 LIBSODIUM_SRC_DIR ?= $(C_DEPS_DIR)/libsodium
 LIBSODIUM_INCLUDE_DIR ?= $(LIBSODIUM_SRC_DIR)/src/libsodium/include
