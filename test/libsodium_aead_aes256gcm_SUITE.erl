@@ -1,3 +1,5 @@
+%%% -*- mode: erlang; tab-width: 4; indent-tabs-mode: 1; st-rulers: [70] -*-
+%%% vim: ts=4 sw=4 ft=erlang noet
 -module(libsodium_aead_aes256gcm_SUITE).
 -export([all/0]).
 -export([groups/0]).
@@ -43,7 +45,7 @@ aead_aes256gcm(Config) ->
 aead_aes256gcm_check(_Config) ->
 	case libsodium_crypto_aead_aes256gcm:is_available() of
 		1 ->
-			libsodium_SUITE:check(libsodium_crypto_aead_aes256gcm, [
+			libsodium_test_helper:check(libsodium_crypto_aead_aes256gcm, [
 				{keybytes,    32},
 				{nsecbytes,    0},
 				{npubbytes,   12},

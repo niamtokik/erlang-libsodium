@@ -1,3 +1,5 @@
+%%% -*- mode: erlang; tab-width: 4; indent-tabs-mode: 1; st-rulers: [70] -*-
+%%% vim: ts=4 sw=4 ft=erlang noet
 -module(libsodium_sign_SUITE).
 -export([all/0]).
 -export([groups/0]).
@@ -10,7 +12,9 @@
 -include("libsodium_SUITE.hrl").
 
 all() ->
-  [sign].
+  [
+    sign
+  ].
 
 groups() ->
   [].
