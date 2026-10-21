@@ -9,10 +9,27 @@
   data_file/2,
   tv_file/2,
   tv_file_hex/2,
-  tv_file_hex7/2
+  tv_file_hex7/2,
+  tv_file_hex8/2,
+  vectors/1
 ]).
 -include_lib("common_test/include/ct.hrl").
 -include("libsodium_SUITE.hrl").
+
+%%--------------------------------------------------------------------
+%% @doc consults test vectors files, usually a list of `tuple()'.
+%% @end
+%%--------------------------------------------------------------------
+-spec vectors(Config) -> Vectors when
+	  Config :: proplists:proplists(),
+	  Vectors :: [tuple()].
+
+vectors(Config) ->
+	DataDir = proplists:get_value(data_dir, Config),
+	VectorFile = proplists:get_value(vector_file, Config),
+	VectorPath = filename:join([DataDir, VectorFile]),
+	{ok, Vectors} = file:consult(VectorPath),
+	Vectors.
 
 %% @private
 check(Module, [{Function, Value} | Checks]) ->

@@ -16,10 +16,22 @@ all() ->
   [
 			pwhash_argon2i_key_derivation,
 			pwhash_argon2i_password_storage
-  }.
+  ].
 
 groups() ->
   [].
+
+init_per_suite(Config) ->
+  Config.
+
+end_per_suite(_Config) ->
+  ok.
+
+init_per_group(_Group, Config) ->
+  Config.
+
+end_per_group(_Group, _Config) ->
+  ok.
 
 pwhash_argon2i_key_derivation(Config) ->
 	TV = ?config(tv, Config),

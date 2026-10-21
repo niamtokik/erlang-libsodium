@@ -18,6 +18,20 @@ all() ->
 			pwhash_scrypt_password_storage
   ].
 
+groups() -> [].
+
+init_per_suite(Config) ->
+  Config.
+
+end_per_suite(_Config) ->
+  ok.
+
+init_per_group(_Group, Config) ->
+  Config.
+
+end_per_group(_Group, _Config) ->
+  ok.
+
 pwhash_scrypt_key_derivation(Config) ->
 	TV = ?config(tv, Config),
 	pwhash_scrypt_key_derivation(TV, Config).
