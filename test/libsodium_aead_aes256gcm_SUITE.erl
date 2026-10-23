@@ -1,5 +1,8 @@
 %%% -*- mode: erlang; tab-width: 4; indent-tabs-mode: 1; st-rulers: [70] -*-
 %%% vim: ts=4 sw=4 ft=erlang noet
+%%%===================================================================
+%%%
+%%%===================================================================
 -module(libsodium_aead_aes256gcm_SUITE).
 -export([all/0]).
 -export([groups/0]).
