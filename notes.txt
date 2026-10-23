@@ -1,0 +1,23 @@
+# Static libs
+
+Enable libsodium with pic support.
+
+    cd libsodium
+    ./configure --enable-pic
+    make
+    make all
+
+Then remove the dynamic library from the latest cc command
+and replace it with the statically linked library (libsodium.a).
+
+   cd c_src
+   cc \
+     ./c_src/drv/libsodium_api.o \
+     ./c_src/drv/libsodium_api_crypto_aead_aes256gcm.o \
+     ./c_src/drv/libsodium_api_crypto_aead_chacha20poly1305.o \
+     ... \
+     ./c_src/drv/libsodium_request.o \
+     -shared -L ${ERLANG_PATH}/erlang/29.0/lib/erl_interface-5.8/lib -lei \
+     -o ./priv/libsodium_drv.so \
+     ./c_deps/libsodium/src/libsodium/.libs/libsodium.a
+
