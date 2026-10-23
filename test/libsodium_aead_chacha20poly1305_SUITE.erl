@@ -1,5 +1,8 @@
 %%% -*- mode: erlang; tab-width: 4; indent-tabs-mode: 1; st-rulers: [70] -*-
 %%% vim: ts=4 sw=4 ft=erlang noet
+%%%===================================================================
+%%%
+%%%===================================================================
 -module(libsodium_aead_chacha20poly1305_SUITE).
 -export([all/0]).
 -export([groups/0]).
@@ -7,12 +10,17 @@
 -export([end_per_suite/1]).
 -export([init_per_group/2]).
 -export([end_per_group/2]).
+-export([init_per_testcase/2, end_per_testcase/2]).
 -export([aead_chacha20poly1305/1]).
 -export([aead_chacha20poly1305_check/1]).
 -export([aead_chacha20poly1305_ietf/1]).
 -include_lib("common_test/include/ct.hrl").
 -include("libsodium_SUITE.hrl").
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 all() ->
   [
 			aead_chacha20poly1305,
@@ -20,26 +28,64 @@ all() ->
 			aead_chacha20poly1305_ietf
   ].
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 groups() -> [].
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 init_per_suite(Config) ->
   Config.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 end_per_suite(_Config) ->
   ok.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+init_per_testcase(aead_chacha20poly1305, Config) ->
+	[{vector_file, "aead_chacha20poly1305.config"}|Config];
+init_per_testcase(aead_chacha20poly1305_ietf, Config) ->
+	[{vector_file, "aead_chacha20poly1305_ietf.config"}|Config];
+init_per_testcase(_, Config) ->
+	Config.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+end_per_testcase(_, _) ->
+	ok.
+
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 init_per_group(_Group, Config) ->
   Config.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 end_per_group(_Group, _Config) ->
   ok.
 
-aead_chacha20poly1305(Config) ->
-	TV = ?config(tv, Config),
-	aead_chacha20poly1305(TV, Config).
-
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 aead_chacha20poly1305_check(_Config) ->
-	libsodium_ct_helper:check(libsodium_crypto_aead_chacha20poly1305, [
+	libsodium_test_helper:check(libsodium_crypto_aead_chacha20poly1305, [
 		{keybytes,       32},
 		{nsecbytes,       0},
 		{npubbytes,       8},
@@ -47,9 +93,13 @@ aead_chacha20poly1305_check(_Config) ->
 		{ietf_npubbytes, 12}
 	]).
 
-aead_chacha20poly1305_ietf(Config) ->
-	TVIETF = ?config(tv_ietf, Config),
-	aead_chacha20poly1305_ietf(TVIETF, Config).
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+aead_chacha20poly1305(Config) ->
+	Vectors = libsodium_test_helper:vectors(Config),
+	aead_chacha20poly1305(Vectors, Config).
 
 aead_chacha20poly1305([{K, M, NPub, AD, C, CNoAD} | Vectors], Config) ->
 	MLen = byte_size(M),
@@ -66,7 +116,14 @@ aead_chacha20poly1305([{K, M, NPub, AD, C, CNoAD} | Vectors], Config) ->
 aead_chacha20poly1305([], _Config) ->
 	ok.
 
-%% @private
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+aead_chacha20poly1305_ietf(Config) ->
+	Vectors = libsodium_test_helper:vectors(Config),
+	aead_chacha20poly1305_ietf(Vectors, Config).
+
 aead_chacha20poly1305_ietf([{K, M, NPub, AD, C, CNoAD} | Vectors], Config) ->
 	MLen = byte_size(M),
 	<< CD:MLen/binary, MAC/binary >> = C,

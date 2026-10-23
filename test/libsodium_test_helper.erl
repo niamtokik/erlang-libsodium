@@ -28,6 +28,7 @@ vectors(Config) ->
 	DataDir = proplists:get_value(data_dir, Config),
 	VectorFile = proplists:get_value(vector_file, Config),
 	VectorPath = filename:join([DataDir, VectorFile]),
+	ct:pal("~p~n", [VectorPath]),
 	{ok, Vectors} = file:consult(VectorPath),
 	Vectors.
 

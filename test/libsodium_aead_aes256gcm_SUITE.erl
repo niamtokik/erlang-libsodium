@@ -12,36 +12,69 @@
 -include_lib("common_test/include/ct.hrl").
 -include("libsodium_SUITE.hrl").
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 all() ->
   [aead_aes256gcm].
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 groups() ->
   [].
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 init_per_suite(Config) ->
   _ = application:ensure_all_started(libsodium),
-  tv_file_hex6([{config_file, "aead_aes256gcm.config"}|Config]).
+  [{vector_file, "aead_aes256gcm.config"}|Config].
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 end_per_suite(Config) ->
   _ = application:stop(libsodium),
   Config.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 init_per_group(_Group, Config) ->
   Config.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 end_per_group(_Group, _Config) ->
   ok.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 aead_aes256gcm(Config) ->
 	case libsodium_crypto_aead_aes256gcm:is_available() of
 		1 ->
-			Vectors = ?config(vectors, Config),
-			aead_aes256gcm(Vectors, Config);
+			Vectors = libsodium_test_helper:vectors(Config),
+			Converted = converter(Vectors),
+			aead_aes256gcm(Converted, Config);
 		_ ->
 			ct:log("aead_aes256gcm is not available, skipping..."),
 			ok
 	end.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 aead_aes256gcm_check(_Config) ->
 	case libsodium_crypto_aead_aes256gcm:is_available() of
 		1 ->
@@ -57,6 +90,10 @@ aead_aes256gcm_check(_Config) ->
 			ok
 	end.
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 aead_aes256gcm([{Key, Nonce, Message, Ad, Ciphertext, Mac} | Vectors], Config) ->
 	ExpectedCiphertext = << Ciphertext/binary, Mac/binary >>,
 	TruncatedCiphertext = binary:part(ExpectedCiphertext, 0, libsodium_randombytes:uniform(byte_size(ExpectedCiphertext))),
@@ -73,10 +110,11 @@ aead_aes256gcm([{Key, Nonce, Message, Ad, Ciphertext, Mac} | Vectors], Config) -
 aead_aes256gcm([], _Config) ->
 	ok.
 
-tv_file_hex6(Config) ->
-  Filename = ?config(config_file, Config),
-  File = filename:join([?config(data_dir, Config), Filename]),
-  {ok, [{vectors, Terms}]} = file:consult(File),
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+converter(Vectors) ->
   Fun = fun({A,B,C,D,E,F}) ->
 		{
 			binary:decode_hex(list_to_binary(A)),
@@ -87,4 +125,4 @@ tv_file_hex6(Config) ->
 			binary:decode_hex(list_to_binary(F))
 		}
   end,
-  [{vectors, lists:map(Fun, Terms)}|Config].
+  lists:map(Fun, Vectors).
